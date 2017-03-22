@@ -9,18 +9,20 @@ export default api => (
     static propTypes = {};
     static jsonIdKeys = [];
 
-    static async retrieve(id) {
+    static async retrieve(id, urlPrefix) {
       try {
-        const res = (await api.get(`${this.url}/${id}`));
+        const url = urlPrefix ? `${urlPrefix}/${id}` : `${this.url}/${id}`;
+        const res = (await api.get(url));
         return this.create(res.body);
       } catch (e) {
         return Promise.reject(e);
       }
     }
 
-    static async all(query = {}) {
+    static async all(query = {}, url) {
       try {
-        const res = await api.get(`${this.url}`, { query });
+        url = url || this.url;
+        const res = await api.get(url, { query });
         return this.unwrapAll(res.body).map(this.create.bind(this));
       } catch (e) {
         return Promise.reject(e);
